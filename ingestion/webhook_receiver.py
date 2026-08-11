@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
-from ingestion.email_reader import extract_information_from_email
-from assignment.routing_service import get_next_available_agent
+from clients.queue_client import QueueStorageClient
+from workers.email_worker import EmailWorker
 
 router = APIRouter()
 class  GraphNotification(BaseModel):
@@ -28,10 +28,10 @@ async def receive_notification(request: Request):
 
     body = await request.json()
     message_id = body["value"][0]["resourceData"]["id"]
-    email = extract_information_from_email(message_id)
-    print(email)
-    print("\n")
-    agent = get_next_available_agent()
-    print(agent)
-    return {"status": "received"}
+    print(message_id)
+    queue_client = QueueStorageClient(message_id)
+    queue_client.send_message()
+    email_worker = EmailWorker(queue_client)
+    email_worker.process_emails()
+
 # http://127.0.0.1:8000/docs

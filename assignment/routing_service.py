@@ -19,7 +19,3 @@ def get_next_available_agent():
     round_robin = RoundRobin(fake_database)
     next_agent = round_robin.get_next_agent(available_agents)
     return next_agent
-
-print(get_next_available_agent())
-print(get_next_available_agent())
-print(get_next_available_agent())

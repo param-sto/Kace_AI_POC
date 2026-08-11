@@ -4,7 +4,7 @@ from config import settings
 class SQLClient:
     
     def __init__(self):
-        self.connection = connect(settings.azure_sql_connectionstring)
+        self.connection = connect(settings.azure_sql_connection_string)
 
     def test_connection(self):
         cursor = self.connection.cursor()
