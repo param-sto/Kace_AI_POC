@@ -3,6 +3,8 @@ from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 from clients.queue_client import QueueStorageClient
 from workers.email_worker import EmailWorker
+from workers.sql_worker import SQLWorker
+from clients.sql_client import SQLClient
 
 router = APIRouter()
 class  GraphNotification(BaseModel):
@@ -31,7 +33,10 @@ async def receive_notification(request: Request):
     print(message_id)
     queue_client = QueueStorageClient(message_id)
     queue_client.send_message()
-    email_worker = EmailWorker(queue_client)
+    sql_client = SQLClient()
+    sql_worker = SQLWorker(sql_client)
+    email_worker = EmailWorker(queue_client, sql_worker)
     email_worker.process_emails()
+    return{"status": "received"}
 
 # http://127.0.0.1:8000/docs
