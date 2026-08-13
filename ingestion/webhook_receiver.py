@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
+from ingestion.email_reader import extract_information_from_email
 from clients.queue_client import QueueStorageClient
 from workers.email_worker import EmailWorker
 from workers.sql_worker import SQLWorker
@@ -37,6 +38,7 @@ async def receive_notification(request: Request):
     sql_worker = SQLWorker(sql_client)
     email_worker = EmailWorker(queue_client, sql_worker)
     email_worker.process_emails()
+
     return{"status": "received"}
 
 # http://127.0.0.1:8000/docs

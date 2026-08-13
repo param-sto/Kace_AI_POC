@@ -6,7 +6,7 @@ class FakeDB:
     def __init__(self):
         self.agents = [
             Agent(
-                id = "ez43t=7ht4",
+                id = 164,
                 name = "Alice",
                 email = "Alice@test.com",
                 shift_start = time(7, 0),
@@ -17,7 +17,7 @@ class FakeDB:
                 routing_order = 1
             ),
             Agent(
-                id = "ei43t0-ht4",
+                id = 144,
                 name = "Bob",
                 email = "bob@test.com",
                 shift_start = time(9, 0),
@@ -28,7 +28,7 @@ class FakeDB:
                 routing_order = 2
             ),
             Agent(
-                id = "rj64lt1=ot4",
+                id = 99,
                 name = "Charlie",
                 email = "charlie@test.com",
                 shift_start = time(11, 0),

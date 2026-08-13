@@ -24,7 +24,7 @@ class EmailWorker:
         if answer == None:
             print("creating ticket")
             agent = get_next_available_agent()
-            self.sql_worker.create_conversation(conv_id, agent)
+            self.sql_worker.create_conversation(conv_id, agent.id)
             print(agent)
             print(email)
         else:

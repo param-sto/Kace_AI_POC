@@ -31,13 +31,12 @@ class SQLWorker:
         query = """
         INSERT INTO dbo.Conversations (
             conversation_id,
-            agent_id,
-            status
+            agent_id
         )
-        VALUES (?, ?, ?)
+        VALUES (?, ?)
         """
 
-        self.sql_client.execute(query, (conversation_id, agent_id, "active"))
+        self.sql_client.execute(query, (str(conversation_id), int(agent_id)))
 
     def get_routing_state(self, department: str | None):
         """
@@ -66,4 +65,4 @@ class SQLWorker:
         WHERE department = ?
         """
 
-        self.sql_client.execute(query, (last_index, department))
+        self.sql_client.execute(query, (int(last_index), str(department)))
