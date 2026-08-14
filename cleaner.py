@@ -1,5 +1,7 @@
 import re
 from bs4 import BeautifulSoup
+from models.agent import Agent
+from datetime import datetime
 
 class emailCleaner:
     def clean_email(self, email_body: str, content_type: str, name: str) -> str:
@@ -27,4 +29,20 @@ class emailCleaner:
                 body = body[:idx]
             return body.strip()
         return email_body.strip()
+
+    def clean_sharepoint_data(self, data):
+        agents= []
+        for item in data: 
+            fields = item["fields"]
+            agent = Agent(
+                name = fields["Title"],
+                routing_order = int(fields["routing_order"]),
+                unique_id = int(fields["unique_id"]),
+                start_time = datetime.strptime(fields["start_time"], "%H:%M").time(),
+                end_time = datetime.strptime(fields["end_time"], "%H:%M").time(),
+                active = fields["active"] == "True",
+                on_vacation = fields["on_vacation"] == "True"
+            )
+            agents.append(agent)
+        return agents
     

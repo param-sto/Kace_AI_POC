@@ -3,16 +3,10 @@ from datetime import time
 
 @dataclass
 class Agent:
-    id:str
+    unique_id:str
     name:str
-    email:str
-
     routing_order:int
-
-    shift_start:time
-    shift_end:time
-
+    start_time:time
+    end_time:time
     on_vacation:bool
     active:bool
-
-    active_tickets:int

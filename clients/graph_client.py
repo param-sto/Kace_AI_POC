@@ -58,4 +58,21 @@ class GraphClient:
             return email   
         else:
             raise Exception("Failed to get message:", response.text )
+
+    def get_sharepoint_roster(self, base_url: str, site_id: str, list_id: str):
+        """
+        Retrieves all items from a sharepoint list.
+        """
+        url = f"{base_url}/{site_id}/lists/{list_id}/items?expand=fields"
+        "($select=Title,unique_id,start_time,end_time,active,on_vacation,routing_order)"
+
+        response = requests.get(
+            url, 
+            headers=self.get_header()
+        )
+
+        data = response.json()["value"]
+        email_cleaner = emailCleaner()
+        agents = email_cleaner.clean_sharepoint_data(data)
+        return agents
         
