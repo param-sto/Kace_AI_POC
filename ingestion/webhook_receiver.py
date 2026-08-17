@@ -32,11 +32,9 @@ async def receive_notification(request: Request):
     body = await request.json()
     message_id = body["value"][0]["resourceData"]["id"]
     print(message_id)
-    queue_client = QueueStorageClient(message_id)
-    queue_client.send_message()
-    sql_client = SQLClient()
-    sql_worker = SQLWorker(sql_client)
-    email_worker = EmailWorker(queue_client, sql_worker)
+    queue_client = request.app.state.queue_client
+    queue_client.send_message(message_id)
+    email_worker = request.app.state.email_worker
     email_worker.process_emails()
 
     return{"status": "received"}

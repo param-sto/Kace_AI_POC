@@ -1,18 +1,19 @@
 from datetime import datetime
 
 class AvailabilityService:
-    def is_availible(self, agent):
+    
+    def is_available(self, agent: str) -> bool:
         """
-        Determin 
+        Determin whether the agent is available for routing. 
         """
-    def is_on_shift(self, agent:str) -> bool:
-        """
-        Determine wheter the agent is on shift.
-        """
+        availability = True
         now = datetime.now().time()
-        if agent.shift_start <= now <= agent.shift_end:
-            return True
-        return False
+        if not(agent.start_time <= now <= agent.end_time):
+            availability = False
+        if agent.on_vacation == True:
+            availability = False
+        if agent.active == False:
+            availability = False
+        return availability
 
-    #def is_on_vacation(self, agent):
 

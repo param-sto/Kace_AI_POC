@@ -10,4 +10,4 @@ class RosterCache:
         Load agents into the roster cache from a list of Agent objects
         """
         for agent in agents_list:
-            self.agents[agent.id] = agent
+            self.agents[agent.routing_order] = agent

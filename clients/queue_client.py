@@ -3,18 +3,17 @@ from azure.storage.queue import QueueClient
 from config import settings
 
 class QueueStorageClient:
-    def __init__(self, message_id:str):
+    def __init__(self):
         self.queue_client = QueueClient.from_connection_string(
             conn_str=settings.azure_queue_connection_string, 
             queue_name=settings.azure_queue_name
         )
-        self.message_id = message_id
 
-    def send_message(self):
+    def send_message(self, message_id):
         """
         Adds message to queue
         """
-        message = {"message_id": self.message_id}
+        message = {"message_id": message_id}
 
         self.queue_client.send_message(json.dumps(message))
 
@@ -37,7 +36,7 @@ class QueueStorageClient:
         """
         Deletes message from queue upon successful processing
         """
-        self,self.queue_client.delete_message(unique_id, deletion_id)
+        self.queue_client.delete_message(unique_id, deletion_id)
 
     def get_queue_depth(self):
         properties = self.queue_client.get_queue_properties()

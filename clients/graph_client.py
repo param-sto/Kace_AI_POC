@@ -75,4 +75,18 @@ class GraphClient:
         email_cleaner = emailCleaner()
         agents = email_cleaner.clean_sharepoint_data(data)
         return agents
+
+    def get_auto_reply_settings(self, user_email: str):
+        """
+        Gets the automatic reply settings for a user.
+        """
+        url = (
+            f"https://graph.microsoft.com/v1.0/"
+            f"users/{user_email}/mailboxSettings/"
+            f"automaticRepliesSetting"
+        )
+        self.authenticate()
+        response = requests.get(url, headers=self.get_header())
+        response.raise_for_status()
+        return response.json()
         

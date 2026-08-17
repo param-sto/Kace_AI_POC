@@ -2,6 +2,8 @@ import requests
 from clients.graph_client import GraphClient
 from config import settings
 from models.agent import Agent
+from roster.roster_service import RosterService
+from roster.roster_cache import RosterCache
 
 tenant_id = settings.tenant_id
 client_id = settings.client_id
@@ -13,9 +15,10 @@ site_id = settings.sharepoint_site_id
 list_id = settings.sharepoint_list_id
 
 graph_client = GraphClient(client_id, client_secret, tenant_id, graph_scope, shared_mailbox)
-graph_client.authenticate()
-agents = graph_client.get_sharepoint_roster(base_url, site_id, list_id)
-print(agents)
+print(graph_client.get_auto_reply_settings("EGTestOnly@skilledtradesontario.ca"))
+# graph_client.authenticate()
+# agents = graph_client.get_sharepoint_roster(base_url, site_id, list_id)
+# print(agents)
 # response = requests.get(
 #     site_url, headers=graph_client.get_header()
 # )
@@ -40,5 +43,11 @@ print(agents)
 #     agents.append(agent)
 
 # print(agents)
+# roster_cache = RosterCache()
+# roster_service = RosterService(roster_cache)
+# roster_service.refresh_cache(base_url, site_id, list_id)
+# agents = roster_service.get_agents()
+# print(agents)
+
 
 

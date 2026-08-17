@@ -43,7 +43,7 @@ class SQLWorker:
         Gets the last updated routing state.
         """
         query = """
-        SELECT last_index
+        SELECT current_order
         FROM dbo.RoutingState
         Where department = ?
         """
@@ -60,7 +60,7 @@ class SQLWorker:
 
         query = """
         UPDATE dbo.RoutingState
-        SET last_index = ?,
+        SET current_order = ?,
         updated_at = SYSUTCDATETIME()
         WHERE department = ?
         """

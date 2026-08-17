@@ -1,21 +1,26 @@
 from roster.roster_service import RosterService
 from assignment.round_robin import RoundRobin
 from assignment.availability_service import AvailabilityService
-from storage.fake_db import FakeDB
 
-def get_next_available_agent():
-    # Get a list of all agents from the roster service
-    agents = []
-    roster_service = RosterService(agents)
-    roster_service.refresh_cache()
-    agents = roster_service.get_agents()
+class RoutingService:
 
-    # Filter the agents to only include those who are available
-    availability_service = AvailabilityService()
-    available_agents = availability_service.get_available_agents(agents)
+    def __init__(self, roster_service, availability_service, sql_worker):
+        self.roster_service = roster_service
+        self.availability_service = availability_service
+        self.sql_worker = sql_worker
 
-    # Create a round-robin instance
-    fake_database = FakeDB()
-    round_robin = RoundRobin(fake_database)
-    next_agent = round_robin.get_next_agent(available_agents)
-    return next_agent
+    def get_next_available_agent(self):
+        # Get a dict of all agents from the roster service
+        agents = self.roster_service.get_agents()
+        start_index = self.sql_worker.get_routing_state("IT")
+        for offset in range(len(agents)):
+            index = (start_index + offset)%len(agents)
+            agent = agents[index]
+            if self.availability_service.is_available(agent):
+                next_index = (index+1)%len(agents)
+                self.sql_worker.update_routing_state("IT", next_index)
+                return agent
+
+        return None
+
+    
