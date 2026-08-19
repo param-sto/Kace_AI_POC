@@ -4,21 +4,19 @@ from workers.sql_worker import SQLWorker
 
 class EmailWorker:
 
-    def __init__(self, queue_client, sql_worker, routing_service):
+    def __init__(self, queue_client, sql_worker, routing_service, ticketing_service):
         self.queue_client = queue_client
         self.sql_worker = sql_worker
         self.routing_service = routing_service
+        self.ticketing_service = ticketing_service
 
     def process_emails(self):
         message = self.queue_client.get_message()
-        print("message taken from queue")
         if message is None:
             time.sleep(5)
         message_id = message["message_id"]
         deletion_id = message["deletion_id"]
         unique_id = message["unique_id"]
-        print("extracting info...")
-        print(message_id)
         email = extract_information_from_email(message_id)
         conv_id = email["conversationId"]
         print("ckecking if conv alrerdy exists,....")
@@ -26,15 +24,51 @@ class EmailWorker:
         if answer == None:
             print("creating ticket")
             agent = self.routing_service.get_next_available_agent()
-            self.sql_worker.create_conversation(conv_id, agent.unique_id)
+            data = self.convert_email_to_ticket(email, agent)
+            response = self.ticketing_service.create_ticket(data)
+            ticket_id = 4
+            self.sql_worker.create_conversation(conv_id, agent.unique_id, ticket_id)
+
+            print(response)
             self.queue_client.delete_message(unique_id, deletion_id)
-            print(agent)
-            print(email)
+            print("deleted")
+            # print(agent)
+            # print(email)
         else:
             self.queue_client.delete_message(unique_id, deletion_id)
             print("appending ticket")
-            print(answer)
-            print(email)
+            # print(answer)
+            # print(email)
+
+    def convert_email_to_ticket(self, email, agent):
+        """
+        Convert the email object to a ticket object, mapping out the fields. 
+        """
+        ticket_fields = {
+                "Tickets": [{
+                    "hd_queue_id": 3,
+                    "title": None,
+                    "summary": None,
+                    "owner": None,
+                    "cc_list": None,
+                    "custom_16": None,
+                    "owner": {"id": None}
+                    }]
+            }
+        
+
+        ticket_fields["Tickets"][0]["title"] = email["subject"]
+        ticket_fields["Tickets"][0]["summary"] = email["body"]
+        ticket_fields["Tickets"][0]["cc_list"] = email["from"]
+        ticket_fields["Tickets"][0]["owner"]["id"] = agent.unique_id
+        ticket_fields["Tickets"][0]["custom_16"] = email["from"]
+
+
+        return ticket_fields
+
+
+    
+
 
         
 

@@ -11,7 +11,8 @@ from workers.email_worker import EmailWorker
 from clients.queue_client import QueueStorageClient
 from clients.graph_client import GraphClient
 from config import settings 
-
+from ticketing.ticket_service import TicketService
+from clients.kace_client import KaceClient
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -23,7 +24,10 @@ async def lifespan(app: FastAPI):
     sql_worker = SQLWorker(sql_client)
     routing_service = RoutingService(roster_service, availability_service, sql_worker)
     queue_client = QueueStorageClient()
-    email_worker = EmailWorker(queue_client, sql_worker, routing_service)
+    kace_client = KaceClient(settings.kace_base_url, settings.kace_username, settings.kace_password)
+    result = kace_client.authenticate_kace()
+    ticket_service = TicketService(kace_client)
+    email_worker = EmailWorker(queue_client, sql_worker, routing_service, ticket_service)
     graph_client = GraphClient(
                     client_id=settings.client_id,
                     client_secret=settings.client_secret,

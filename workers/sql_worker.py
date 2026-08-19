@@ -31,9 +31,10 @@ class SQLWorker:
         query = """
         INSERT INTO dbo.Conversations (
             conversation_id,
-            agent_id
+            agent_id,
+            ticket_id
         )
-        VALUES (?, ?)
+        VALUES (?, ?, ?)
         """
 
         self.sql_client.execute(query, (str(conversation_id), int(agent_id)))

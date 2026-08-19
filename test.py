@@ -9,8 +9,10 @@ from models.agent import Agent
 from clients.sql_client import SQLClient
 from clients.queue_client import QueueStorageClient
 
-# subscription_manager = SubscriptionManager()
-# print(subscription_manager.create_subscription())
+subscription_manager = SubscriptionManager()
+print(subscription_manager.create_subscription())
+
+
 
 #response = extract_information_from_email("AAMkAGUzMDNhMDc5LTQ2MWEtNDNhMy04MTUxLTU5YzI4YzM1ZWI4NABGAAAAAAAV61gj875eTZ1LEpERW2CABwCjakla1gmRRZRgYj71UrpVAAAAAAEMAACjakla1gmRRZRgYj71UrpVAAATWvN9AAA=")
 #print(response)
@@ -32,11 +34,12 @@ from clients.queue_client import QueueStorageClient
 
 # print(settings.azure_sql_connectionstring)
 
-sql_client = SQLClient()
-num = sql_client.test_connection()
-print(num)
+# sql_client = SQLClient()
+# num = sql_client.test_connection()
+# print(num)
 # msg_id = "abcd1234rufiyfj=hou6bv8"
-# queue_client = QueueStorageClient(msg_id)
+queue_client = QueueStorageClient()
+queue_client.clear_queue()
 # queue_client.send_message()
 # msg = queue_client.get_message()
 # print(msg)

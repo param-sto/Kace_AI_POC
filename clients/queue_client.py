@@ -42,3 +42,7 @@ class QueueStorageClient:
         properties = self.queue_client.get_queue_properties()
         count = properties.approximate_message_count
         print(count)
+
+    def clear_queue(self):
+        self.queue_client.clear_messages()
+        print("Queue cleared successfully")
