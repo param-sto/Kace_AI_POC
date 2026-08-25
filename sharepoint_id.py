@@ -4,6 +4,8 @@ from config import settings
 from models.agent import Agent
 from roster.roster_service import RosterService
 from roster.roster_cache import RosterCache
+from workers.ooo_worker import OOOWorker
+
 
 tenant_id = settings.tenant_id
 client_id = settings.client_id
@@ -15,7 +17,9 @@ site_id = settings.sharepoint_site_id
 list_id = settings.sharepoint_list_id
 
 graph_client = GraphClient(client_id, client_secret, tenant_id, graph_scope, shared_mailbox)
-print(graph_client.get_auto_reply_settings("EGTestOnly@skilledtradesontario.ca"))
+ooo_worker = OOOWorker(graph_client)
+result = ooo_worker.is_out_of_office(shared_mailbox)
+print(result)
 # graph_client.authenticate()
 # agents = graph_client.get_sharepoint_roster(base_url, site_id, list_id)
 # print(agents)

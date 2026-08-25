@@ -9,22 +9,22 @@ class SQLWorker:
         """
         self.sql_client = sql_client
 
-    def get_conversation_agent(self, conversation_id: str):
+    def get_conversation_info(self, conversation_id: str):
         """
         Return the agent currently assigned to a conversation.
         Returns None if the conversation does not exist.
         """
         query = """
-        SELECT agent_id
+        SELECT agent_id, ticket_id
         FROM dbo.Conversations
         WHERE conversation_id = ?
         """
         result = self.sql_client.fetch_one(query,(conversation_id,))
         if result is None:
             return None
-        return result[0]
+        return {"agent_id": result[0], "ticket_id": result[1]}
 
-    def create_conversation(self, conversation_id: str, agent_id: int):
+    def create_conversation(self, conversation_id: str, agent_id: int, ticket_id: int):
         """
         Creates a new conversation and asignes it to an agent.
         """
@@ -37,7 +37,7 @@ class SQLWorker:
         VALUES (?, ?, ?)
         """
 
-        self.sql_client.execute(query, (str(conversation_id), int(agent_id)))
+        self.sql_client.execute(query, (str(conversation_id), int(agent_id), int(ticket_id)))
 
     def get_routing_state(self, department: str | None):
         """

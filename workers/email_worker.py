@@ -13,32 +13,34 @@ class EmailWorker:
     def process_emails(self):
         message = self.queue_client.get_message()
         if message is None:
-            time.sleep(5)
+            return 
+        print("=" * 50)
         message_id = message["message_id"]
         deletion_id = message["deletion_id"]
         unique_id = message["unique_id"]
+        print("MESSAGE ID:", message_id)
+        print("QUEUE ID:", unique_id)
         email = extract_information_from_email(message_id)
         conv_id = email["conversationId"]
+        body = email["body"]
         print("ckecking if conv alrerdy exists,....")
-        answer = self.sql_worker.get_conversation_agent(conv_id)
+        answer = self.sql_worker.get_conversation_info(conv_id)
         if answer == None:
             print("creating ticket")
             agent = self.routing_service.get_next_available_agent()
             data = self.convert_email_to_ticket(email, agent)
             response = self.ticketing_service.create_ticket(data)
-            ticket_id = 4
+            ticket_id = response["IDs"][0]
+            self.ticketing_service.append_comment(3, ticket_id, body)
             self.sql_worker.create_conversation(conv_id, agent.unique_id, ticket_id)
-
-            print(response)
             self.queue_client.delete_message(unique_id, deletion_id)
             print("deleted")
-            # print(agent)
-            # print(email)
         else:
-            self.queue_client.delete_message(unique_id, deletion_id)
             print("appending ticket")
-            # print(answer)
-            # print(email)
+            agent_id = answer["agent_id"]
+            ticket_id = answer["ticket_id"]
+            self.ticketing_service.append_comment(3, ticket_id, body)
+            self.queue_client.delete_message(unique_id, deletion_id)
 
     def convert_email_to_ticket(self, email, agent):
         """

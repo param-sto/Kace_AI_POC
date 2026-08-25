@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
-from ingestion.email_reader import extract_information_from_email
 from clients.queue_client import QueueStorageClient
 from workers.email_worker import EmailWorker
 from workers.sql_worker import SQLWorker
@@ -31,7 +30,6 @@ async def receive_notification(request: Request):
 
     body = await request.json()
     message_id = body["value"][0]["resourceData"]["id"]
-    print(message_id)
     queue_client = request.app.state.queue_client
     queue_client.send_message(message_id)
     email_worker = request.app.state.email_worker

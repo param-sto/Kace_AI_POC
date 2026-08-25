@@ -26,6 +26,7 @@ async def lifespan(app: FastAPI):
     queue_client = QueueStorageClient()
     kace_client = KaceClient(settings.kace_base_url, settings.kace_username, settings.kace_password)
     result = kace_client.authenticate_kace()
+    kace_client.authenticate_admin_ui()
     ticket_service = TicketService(kace_client)
     email_worker = EmailWorker(queue_client, sql_worker, routing_service, ticket_service)
     graph_client = GraphClient(
