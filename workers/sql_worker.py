@@ -9,7 +9,7 @@ class SQLWorker:
         """
         self.sql_client = sql_client
 
-    def get_conversation_info(self, conversation_id: str):
+    def get_conversation(self, conversation_id: str):
         """
         Return the agent currently assigned to a conversation.
         Returns None if the conversation does not exist.

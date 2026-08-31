@@ -3,7 +3,6 @@ from config import settings
 from cleaner import emailCleaner
 from ingestion.subscription_manager import SubscriptionManager
 from ingestion.email_reader import extract_information_from_email
-from storage.fake_db import FakeDB
 from roster.roster_service import RosterService
 from models.agent import Agent
 from clients.sql_client import SQLClient
