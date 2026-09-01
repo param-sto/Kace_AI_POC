@@ -8,9 +8,16 @@ class RoutingService:
         self.sql_worker = sql_worker
 
     def get_next_available_agent(self):
-        # Get a dict of all agents from the roster service
+        """
+        Returns the next availible agent in round-robin based on their availibility.
+        """
         agents = self.roster_service.get_agents()
+        if not agents:
+            raise RuntimeError("No agents found in roster")
         start_index = self.sql_worker.get_routing_state("IT")
+        if start_index is None:
+            self.sql_worker.update_routing_state("IT", 0)
+            start_index = 0
         for offset in range(len(agents)):
             index = (start_index + offset)%len(agents)
             agent = agents[index]

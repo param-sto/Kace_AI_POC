@@ -77,10 +77,8 @@ class KaceClient:
         )
 
         response.raise_for_status()
-
         self.authenticated = True
 
-        print(self.session.cookies.get_dict())
 
     def get_admin_csrf_token(self):
 

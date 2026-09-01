@@ -11,13 +11,23 @@ from workers.email_worker import EmailWorker
 from clients.queue_client import QueueStorageClient
 from clients.graph_client import GraphClient
 from config import settings 
+from workers.sharepoint_worker import SharepointWorker
 from ticketing.ticket_service import TicketService
 from clients.kace_client import KaceClient
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    graph_client = GraphClient(
+                    client_id=settings.client_id,
+                    client_secret=settings.client_secret,
+                    tenant_id=settings.tenant_id,
+                    graph_scope=settings.graph_scope,
+                    shared_mailbox=settings.shared_mailbox
+                    )
+    graph_client.authenticate()
     roster_cache = RosterCache()
-    roster_service = RosterService(roster_cache)
+    sharepoint_worker = SharepointWorker(graph_client)
+    roster_service = RosterService(roster_cache, sharepoint_worker)
     roster_service.refresh_cache(settings.sharepoint_site_url_base, settings.sharepoint_site_id, settings.sharepoint_list_id)
     availability_service = AvailabilityService()
     sql_client = SQLClient()
@@ -29,21 +39,11 @@ async def lifespan(app: FastAPI):
     kace_client.authenticate_admin_ui()
     ticket_service = TicketService(kace_client)
     email_worker = EmailWorker(queue_client, sql_worker, routing_service, ticket_service)
-    graph_client = GraphClient(
-                    client_id=settings.client_id,
-                    client_secret=settings.client_secret,
-                    tenant_id=settings.tenant_id,
-                    graph_scope=settings.graph_scope,
-                    shared_mailbox=settings.shared_mailbox
-                    )
     app.state.email_worker = email_worker
     app.state.queue_client = queue_client
     yield 
 
 app = FastAPI(lifespan=lifespan)
-
-
-
 app.include_router(router)
 
 @app.get("/")

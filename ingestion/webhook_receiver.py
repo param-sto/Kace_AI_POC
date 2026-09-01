@@ -1,10 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
-from clients.queue_client import QueueStorageClient
-from workers.email_worker import EmailWorker
-from workers.sql_worker import SQLWorker
-from clients.sql_client import SQLClient
 
 router = APIRouter()
 class  GraphNotification(BaseModel):

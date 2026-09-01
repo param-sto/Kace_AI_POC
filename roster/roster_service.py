@@ -3,8 +3,9 @@ from roster.roster_cache import RosterCache
 from config import settings
 
 class RosterService:
-    def __init__(self, cache):
-        self.cache = RosterCache()
+    def __init__(self, cache, sharepoint_worker):
+        self.cache = cache
+        self.sharepoint_worker = sharepoint_worker
 
     def get_agents(self):
         return self.cache.agents
@@ -13,15 +14,7 @@ class RosterService:
         """
         Refresh the roster cache with the latest agent data
         """
-        graph_client = GraphClient(
-                        client_id=settings.client_id,
-                        client_secret=settings.client_secret,
-                        tenant_id=settings.tenant_id,
-                        graph_scope=settings.graph_scope,
-                        shared_mailbox=settings.shared_mailbox
-                        )
-        graph_client.authenticate()
-        agents = graph_client.get_sharepoint_roster(settings.sharepoint_site_url_base, settings.sharepoint_site_id, settings.sharepoint_list_id)
+        agents = self.sharepoint_worker.get_agents_from_sharepoint()
         self.cache.update(agents)
 
 

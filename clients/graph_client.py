@@ -49,7 +49,7 @@ class GraphClient:
         """
         url = (
             f"https://graph.microsoft.com/v1.0"
-            f"/users/{self.shared_mailbox}/mailFolders('inbox')/messages/{message_id}?"
+            f"/users/{self.shared_mailbox}/mailFolders('inbox')/messages/{message_id}"
             f"?$select=subject,from,body,conversationId,receivedDateTime"
         )
         response = requests.get(url, headers=self.get_header())
@@ -63,8 +63,10 @@ class GraphClient:
         """
         Retrieves all items from a sharepoint list.
         """
-        url = f"{base_url}/{site_id}/lists/{list_id}/items?expand=fields"
+        url = (
+        f"{base_url}/{site_id}/lists/{list_id}/items?expand=fields"
         "($select=Title,unique_id,start_time,end_time,active,on_vacation,routing_order)"
+            )
 
         response = requests.get(
             url, 
@@ -72,9 +74,7 @@ class GraphClient:
         )
 
         data = response.json()["value"]
-        email_cleaner = emailCleaner()
-        agents = email_cleaner.clean_sharepoint_data(data)
-        return agents
+        return data
 
     def get_auto_reply_settings(self, user_email: str):
         """
