@@ -172,6 +172,7 @@ Production deployments should:
 * Prefer Managed Identity where supported.
 * Remove sensitive values from local configuration.
 * Enable TLS certificate verification for KACE connections.
+* Change Database authentication to EntraID.
 
 ### 6. Add Monitoring and Logging
 
