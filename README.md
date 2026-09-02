@@ -47,7 +47,7 @@ Email Worker
 ## Project Structure
 
 ```text
-email_poc/
+KACE_AI_POC/
 │
 ├── config/
 │   └── settings.py   #The Primary source that reads the secrets from .env
