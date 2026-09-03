@@ -74,7 +74,8 @@ KACE_AI_POC/
 │
 ├── worker/
 │   ├── email_worker.py      #Processes the incoming emails and convert them to tickets
-│   ├── sharepoint_worker.py #Gets agents from the SharePoint roster 
+│   ├── sharepoint_worker.py #Gets agents from the SharePoint roster
+|   ├── ooo_worker  #Gets Out of Office status for the agents
 │   └── sql_worker.py        #Provides functions to read and write in the DB
 │
 ├── models/
@@ -88,6 +89,7 @@ KACE_AI_POC/
 │   └── schema.sql  #Provides the schema to initialize and create tables
 │
 ├── .env
+├── cleaner.py  #Cleans emails to extract only relevant information form the body
 ├── main.py  
 └── requirements.txt
 ```
